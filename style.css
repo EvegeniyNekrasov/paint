@@ -1,0 +1,89 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.paint-app {
+	width: 100%;
+	height: 100dvh;
+	display: flex;
+	flex-direction: column;
+	border: 4px solid rgb(174, 173, 173);
+	background-color: rgb(138, 137, 137);
+}
+
+header {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.file-name {
+	padding: 5px;
+	background-color: blue;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.header-buttons {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.header-buttons div {
+	width: 20px;
+	height: 20px;
+	background-color: white;
+}
+
+header ul {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+li {
+	list-style: none;
+}
+
+.main-content {
+	width: 100%;
+	height: 100%;
+	border-bottom: 1px solid white;
+	display: flex;
+}
+
+.tools {
+	border-right: 2px solid black;
+	padding: 2px;
+}
+
+.tools-list {
+	width: 80px;
+	min-height: 80px;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+}
+
+.tools-list button {
+	width: 100%;
+	height: 30px;
+	outline: none;
+	border: none;
+	border-top: 2px solid white;
+	border-left: 2px solid white;
+	border-right: 2px solid black;
+	border-bottom: 2px solid black;
+}
+.canvas-container {
+	width: 100%;
+	height: 100%;
+}
+.color-pallete {
+	width: 100%;
+	height: 100px;
+}
+
