@@ -1,3 +1,5 @@
+import { GRID_COLOR_LINES } from "./constants";
+
 export class Canvas {
 	constructor(width, height) {
 		this.width = width;
@@ -105,7 +107,7 @@ export class Canvas {
 	}
 
 	addGridToCanvas() {
-		this.ctx.strokeStyle = "#ddd"; // Color de la línea de la cuadrícula
+		this.ctx.strokeStyle = GRID_COLOR_LINES; 
 
 		// Dibujamos líneas verticales
 		for (let x = 0; x <= this.canvas.width; x += this.gridSize) {
