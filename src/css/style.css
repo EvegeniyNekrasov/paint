@@ -46,14 +46,13 @@ select {
 	html:focus-within {
 		scroll-behavior: auto;
 	}
+
 	*,
 	*::before,
 	*::after {
 		animation-duration: 0.01ms !important;
 		animation-iteration-count: 1 !important;
-		transition-duration: 0.01ms !important;
 		scroll-behavior: auto !important;
-		transition: none;
 	}
 }
 
@@ -68,8 +67,8 @@ html {
 	height: 100dvh;
 	display: flex;
 	flex-direction: column;
-	border: 4px solid rgb(174, 173, 173);
-	background-color: rgb(138, 137, 137);
+	border: 4px solid rgb(174 173 173);
+	background-color: rgb(138 137 137);
 }
 
 header {
@@ -84,6 +83,7 @@ header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	color: white;
 }
 
 .header-buttons {
@@ -137,10 +137,12 @@ li {
 	border-right: 2px solid black;
 	border-bottom: 2px solid black;
 }
+
 .canvas-container {
 	width: 100%;
 	height: 100%;
 }
+
 .color-pallete {
 	width: 100%;
 	height: 100px;

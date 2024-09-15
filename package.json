@@ -1,14 +1,17 @@
 {
-  "name": "paint",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "devDependencies": {
-    "vite": "^5.4.1"
-  }
+	"name": "paint",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview",
+		"style": "npx stylelint '**/*.css'"
+	},
+	"devDependencies": {
+		"stylelint": "^16.9.0",
+		"stylelint-config-standard": "^36.0.1",
+		"vite": "^5.4.1"
+	}
 }

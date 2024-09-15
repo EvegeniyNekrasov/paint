@@ -1,4 +1,4 @@
-import { GRID_COLOR_LINES } from "./constants";
+import { DOT_DIMENTION, GRID_COLOR_LINES } from "./constants";
 
 export class Canvas {
 	constructor(width, height) {
@@ -12,7 +12,7 @@ export class Canvas {
 		this.gridSize = 10;
 		this.gridVisible = false;
 		this.isDrawing = false;
-		this.lines = []; // Array para guardar las líneas
+		this.lines = [];
 	}
 
 	initCanvas() {
@@ -23,7 +23,7 @@ export class Canvas {
 				this.canvas.width = newWidth;
 				this.canvas.height = newHeight;
 
-				this.redrawAll(); // Redibujamos todo después del redimensionado
+				this.redrawAll();
 			}
 		});
 		resizeObserver.observe(document.getElementById("canvasContainer"));
@@ -39,7 +39,7 @@ export class Canvas {
 			const x = event.clientX - rect.left;
 			const y = event.clientY - rect.top;
 			this.ctx.fillStyle = "red";
-			this.ctx.fillRect(x, y, 10, 10);
+			this.ctx.fillRect(x, y, DOT_DIMENTION, DOT_DIMENTION);
 			this.dots.push({ x, y });
 			localStorage.setItem("dots", JSON.stringify(this.dots));
 		});
@@ -48,14 +48,14 @@ export class Canvas {
 	redrawDots() {
 		for (const dot of this.dots) {
 			this.ctx.fillStyle = "red";
-			this.ctx.fillRect(dot.x, dot.y, 10, 10);
+			this.ctx.fillRect(dot.x, dot.y, DOT_DIMENTION, DOT_DIMENTION);
 		}
 	}
 
 	clearDots() {
 		localStorage.removeItem("dots");
 		this.dots = [];
-		this.redrawAll(); // Redibujamos todo, sin los puntos
+		this.redrawAll();
 	}
 
 	drawLines() {
@@ -67,7 +67,7 @@ export class Canvas {
 
 			this.ctx.beginPath();
 			this.ctx.moveTo(startX, startY);
-			this.lines.push({ startX, startY, points: [] }); // Guardamos el inicio de la línea
+			this.lines.push({ startX, startY, points: [] });
 		});
 
 		this.canvas.addEventListener("mousemove", (event) => {
@@ -81,7 +81,7 @@ export class Canvas {
 				this.ctx.lineWidth = 2;
 				this.ctx.stroke();
 
-				this.lines[this.lines.length - 1].points.push({ x, y }); // Guardamos los puntos de la línea
+				this.lines[this.lines.length - 1].points.push({ x, y });
 			}
 		});
 
@@ -107,9 +107,8 @@ export class Canvas {
 	}
 
 	addGridToCanvas() {
-		this.ctx.strokeStyle = GRID_COLOR_LINES; 
+		this.ctx.strokeStyle = GRID_COLOR_LINES;
 
-		// Dibujamos líneas verticales
 		for (let x = 0; x <= this.canvas.width; x += this.gridSize) {
 			this.ctx.beginPath();
 			this.ctx.moveTo(x, 0);
@@ -117,7 +116,6 @@ export class Canvas {
 			this.ctx.stroke();
 		}
 
-		// Dibujamos líneas horizontales
 		for (let y = 0; y <= this.canvas.height; y += this.gridSize) {
 			this.ctx.beginPath();
 			this.ctx.moveTo(0, y);
@@ -130,22 +128,19 @@ export class Canvas {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 
-	// Redibujamos todo (grid, puntos, líneas)
 	redrawAll() {
 		this.clearCanvas();
 
-		// Si el grid está activado, lo dibujamos primero
 		if (this.gridVisible) {
 			this.addGridToCanvas();
 		}
 
-		// Redibujamos los puntos y las líneas después del grid
 		this.redrawDots();
 		this.redrawLines();
 	}
 
 	toggleGrid() {
-		this.gridVisible = !this.gridVisible; // Cambiamos el estado
-		this.redrawAll(); // Redibujamos todo
+		this.gridVisible = !this.gridVisible;
+		this.redrawAll();
 	}
 }

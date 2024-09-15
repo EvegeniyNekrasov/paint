@@ -1,23 +1,25 @@
-import { Canvas } from "./Canvas";
-const main = () => {
-	document.addEventListener("DOMContentLoaded", () => {
-		const canvasContainer = document.getElementById("canvasContainer");
+import { addListener } from "./helpers/main-helper";
+import { Canvas } from "./js/Canvas";
 
-		const width = Number.parseInt(canvasContainer.offsetWidth);
-		const height = Number.parseInt(canvasContainer.offsetHeight);
+class Main {
+	init() {
+		document.addEventListener("DOMContentLoaded", () => {
+			const canvasContainer = document.getElementById("canvasContainer");
 
-		const canvas = new Canvas(width, height);
-		canvas.initCanvas();
-		canvas.drawDot();
+			if (!canvasContainer) return;
 
-		document
-			.getElementById("clear")
-			.addEventListener("click", () => canvas.clearDots());
+			const width = Number.parseInt(canvasContainer.offsetWidth);
+			const height = Number.parseInt(canvasContainer.offsetHeight);
 
-		document
-			.getElementById("grid")
-			.addEventListener("click", () => canvas.toggleGrid());
-	});
-};
+			const canvas = new Canvas(width, height);
+			canvas.initCanvas();
+			canvas.drawDot();
 
-main();
+			addListener("clear", "click", () => canvas.clearDots());
+			addListener("grid", "click", () => canvas.drawLines());
+		});
+	}
+}
+
+const main = new Main();
+main.init();

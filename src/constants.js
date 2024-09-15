@@ -1,1 +1,0 @@
-export const GRID_COLOR_LINES = "#ddd";
