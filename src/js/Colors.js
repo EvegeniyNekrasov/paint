@@ -33,9 +33,7 @@ export class ColorsPallete {
         btn.classList.add("palette-btn");
         btn.style.background = this.colorsList[color];
         btn.addEventListener("click", () => {
-          console.log(this.canvas);
           this.canvas.setSelectedColor(this.colorsList[color]);
-          console.log(this.selectedColor);
         });
         this.colorsButtonList.push(btn);
       }

@@ -1,5 +1,3 @@
-import { addListener } from "../helpers/main-helper";
-
 export class ToolsButtons {
   constructor(canvas) {
     this.canvas = canvas;
@@ -22,6 +20,12 @@ export class ToolsButtons {
         className: "lines",
         name: "line",
         onclick: () => this.canvas.drawLines(),
+      },
+      {
+        id: "rectangleButton",
+        className: "rectangle",
+        name: "rect",
+        onclick: () => this.canvas.drawRectangle(),
       },
     ];
   }

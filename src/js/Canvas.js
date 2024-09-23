@@ -13,6 +13,7 @@ export class Canvas {
     this.gridVisible = false;
     this.isDrawing = false;
     this.lines = [];
+    this.rectangles = JSON.parse(localStorage.getItem("rectangles")) || [];
   }
 
   initCanvas() {
@@ -60,6 +61,27 @@ export class Canvas {
       this.canvas.removeEventListener("mouseup", this.drawLinesMouseUpHandler);
       this.drawLinesMouseUpHandler = null;
     }
+    if (this.drawRectangleMouseDownHandler) {
+      this.canvas.removeEventListener(
+        "mousedown",
+        this.drawRectangleMouseDownHandler,
+      );
+      this.drawRectangleMouseDownHandler = null;
+    }
+    if (this.drawRectangleMouseMoveHandler) {
+      this.canvas.removeEventListener(
+        "mousemove",
+        this.drawRectangleMouseMoveHandler,
+      );
+      this.drawRectangleMouseMoveHandler = null;
+    }
+    if (this.drawRectangleMouseUpHandler) {
+      this.canvas.removeEventListener(
+        "mouseup",
+        this.drawRectangleMouseUpHandler,
+      );
+      this.drawRectangleMouseUpHandler = null;
+    }
   }
 
   drawDot() {
@@ -93,10 +115,87 @@ export class Canvas {
     const rect = this.canvas.getBoundingClientRect();
     const displayMouseMove = document.getElementById("mouseTracker");
     this.canvas.addEventListener("mousemove", (event) => {
-      console.log(event.clientX - rect.left);
-      console.log(event.clientY - rect.top);
       displayMouseMove.textContent = `x: ${event.clientX - rect.left}, y: ${event.clientY - rect.top}`;
     });
+  }
+  drawRectangle() {
+    this.clearEvents();
+
+    let initialX;
+    let initialY;
+
+    this.drawRectangleMouseDownHandler = (event) => {
+      this.isDrawing = true;
+
+      const rect = this.canvas.getBoundingClientRect();
+      initialX = event.clientX - rect.left;
+      initialY = event.clientY - rect.top;
+    };
+
+    this.drawRectangleMouseMoveHandler = (event) => {
+      if (this.isDrawing) {
+        const rect = this.canvas.getBoundingClientRect();
+        const currentX = event.clientX - rect.left;
+        const currentY = event.clientY - rect.top;
+
+        const width = currentX - initialX;
+        const height = currentY - initialY;
+
+        this.redrawAll();
+
+        this.ctx.strokeStyle = this.selectedColor;
+        this.ctx.lineWidth = 2;
+
+        this.ctx.strokeRect(initialX, initialY, width, height);
+      }
+    };
+
+    this.drawRectangleMouseUpHandler = (event) => {
+      if (this.isDrawing) {
+        this.isDrawing = false;
+
+        const rect = this.canvas.getBoundingClientRect();
+        const finalX = event.clientX - rect.left;
+        const finalY = event.clientY - rect.top;
+        const width = finalX - initialX;
+        const height = finalY - initialY;
+
+        this.rectangles.push({
+          x: initialX,
+          y: initialY,
+          width,
+          height,
+          color: this.selectedColor,
+        });
+        localStorage.setItem("rectangles", JSON.stringify(this.rectangles));
+
+        this.redrawAll();
+      }
+    };
+
+    this.canvas.addEventListener(
+      "mousedown",
+      this.drawRectangleMouseDownHandler,
+    );
+    this.canvas.addEventListener(
+      "mousemove",
+      this.drawRectangleMouseMoveHandler,
+    );
+    this.canvas.addEventListener("mouseup", this.drawRectangleMouseUpHandler);
+  }
+
+  redrawRectangles() {
+    for (const rect of this.rectangles) {
+      this.ctx.strokeStyle = rect.color;
+      this.ctx.lineWidth = 2;
+      this.ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+    }
+  }
+
+  clearRectangles() {
+    localStorage.removeItem("rectangles");
+    this.rectangles = [];
+    this.redrawAll();
   }
 
   drawLines() {
@@ -185,6 +284,7 @@ export class Canvas {
 
     this.redrawDots();
     this.redrawLines();
+    this.redrawRectangles();
   }
 
   toggleGrid() {
