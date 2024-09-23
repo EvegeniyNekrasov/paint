@@ -1,64 +1,47 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="src/css/style.css" rel="stylesheet" />
-    <script type="module" src="src/main.js" defer></script>
-    <title>Vite App</title>
-  </head>
-  <body>
-    <main class="paint-app">
-      <header>
-        <div class="file-name">
-          <span>Paint</span>
-          <div class="header-buttons">
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
-        </div>
-        <ul>
-          <li>File</li>
-          <li>Edit</li>
-          <li>View</li>
-          <li>Image</li>
-          <li>Options</li>
-          <li>Help</li>
-        </ul>
-      </header>
-      <div class="main-content">
-        <aside class="tools">
-          <div class="tools-list">
-            <button id="clear">co</button>
-            <button id="grid">co</button>
-            <button>co</button>
-            <button>co</button>
-            <button>co</button>
-            <button>co</button>
-            <button>co</button>
-            <button>co</button>
-            <button>co</button>
-          </div>
-        </aside>
-        <div class="canvas-container" id="canvasContainer">
-          <canvas id="canvas" class="board"></canvas>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="src/css/style.css" rel="stylesheet" />
+  <script type="module" src="src/main.js" defer></script>
+  <title>Vite App</title>
+</head>
+
+<body>
+  <main class="paint-app">
+    <header>
+      <div class="file-name">
+        <span>Paint</span>
+        <div class="header-buttons">
+          <div></div>
+          <div></div>
+          <div></div>
         </div>
       </div>
-      <div class="color-pallete">
-        <div>
-          <button>co</button>
-          <button>co</button>
-          <button>co</button>
-          <button>co</button>
-          <button>co</button>
-          <button>co</button>
-          <button>co</button>
-          <button>co</button>
-          <button>co</button>
-          <button>co</button>
-        </div>
+      <ul>
+        <li>File</li>
+        <li>Edit</li>
+        <li>View</li>
+        <li>Image</li>
+        <li>Options</li>
+        <li>Help</li>
+      </ul>
+    </header>
+    <div class="main-content">
+      <aside class="tools">
+        <div class="tools-list" id="toolsButtonsContainer"></div>
+      </aside>
+      <div class="canvas-container" id="canvasContainer">
+        <canvas id="canvas" class="board"></canvas>
       </div>
-    </main>
-  </body>
+    </div>
+    <div class="color-pallete">
+      <div id="colorPalleteContainer"></div>
+      <div id="mouseTracker"></div>
+    </div>
+  </main>
+</body>
+
 </html>

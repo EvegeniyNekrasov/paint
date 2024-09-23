@@ -1,24 +1,39 @@
-import { addListener } from "./helpers/main-helper";
 import { Canvas } from "./js/Canvas";
+import { ColorsPallete } from "./js/Colors";
+import { ToolsButtons } from "./js/ToolsButtons";
 
 class Main {
-	init() {
-		document.addEventListener("DOMContentLoaded", () => {
-			const canvasContainer = document.getElementById("canvasContainer");
+  init() {
+    document.addEventListener("DOMContentLoaded", () => {
+      const canvasContainer = document.getElementById("canvasContainer");
 
-			if (!canvasContainer) return;
+      if (!canvasContainer) return;
 
-			const width = Number.parseInt(canvasContainer.offsetWidth);
-			const height = Number.parseInt(canvasContainer.offsetHeight);
+      const width = Number.parseInt(canvasContainer.offsetWidth);
+      const height = Number.parseInt(canvasContainer.offsetHeight);
 
-			const canvas = new Canvas(width, height);
-			canvas.initCanvas();
-			canvas.drawDot();
+      const canvas = new Canvas(width, height);
+      canvas.initCanvas();
+      canvas.getMousePosition();
+      const toolsButtonsContainer = document.getElementById(
+        "toolsButtonsContainer",
+      );
 
-			addListener("clear", "click", () => canvas.clearDots());
-			addListener("grid", "click", () => canvas.drawLines());
-		});
-	}
+      const toolsButtons = new ToolsButtons(canvas).getButtons();
+
+      for (const button of toolsButtons) {
+        const btn = document.createElement("button");
+        btn.setAttribute("id", button.id);
+        btn.addEventListener("click", button.onclick);
+        btn.textContent = button.name;
+        btn.classList.add(button.className);
+        toolsButtonsContainer.appendChild(btn);
+      }
+
+      const colorPalleteButtons = new ColorsPallete(canvas);
+      colorPalleteButtons.initColors();
+    });
+  }
 }
 
 const main = new Main();

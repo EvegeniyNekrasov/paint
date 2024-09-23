@@ -1,146 +1,194 @@
 import { DOT_DIMENTION, GRID_COLOR_LINES } from "./constants";
 
 export class Canvas {
-	constructor(width, height) {
-		this.width = width;
-		this.height = height;
-		this.canvas = document.getElementById("canvas");
-		this.canvas.style.background = "white";
-		this.ctx = this.canvas.getContext("2d");
-		this.dots = JSON.parse(localStorage.getItem("dots")) || [];
+  constructor(width, height) {
+    this.width = width;
+    this.height = height;
+    this.canvas = document.getElementById("canvas");
+    this.canvas.style.background = "white";
+    this.ctx = this.canvas.getContext("2d");
+    this.dots = JSON.parse(localStorage.getItem("dots")) || [];
+    this.selectedColor = "#000000";
+    this.gridSize = 10;
+    this.gridVisible = false;
+    this.isDrawing = false;
+    this.lines = [];
+  }
 
-		this.gridSize = 10;
-		this.gridVisible = false;
-		this.isDrawing = false;
-		this.lines = [];
-	}
+  initCanvas() {
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const newWidth = entry.target.offsetWidth;
+        const newHeight = entry.target.offsetHeight;
+        this.canvas.width = newWidth;
+        this.canvas.height = newHeight;
 
-	initCanvas() {
-		const resizeObserver = new ResizeObserver((entries) => {
-			for (const entry of entries) {
-				const newWidth = entry.target.offsetWidth;
-				const newHeight = entry.target.offsetHeight;
-				this.canvas.width = newWidth;
-				this.canvas.height = newHeight;
+        this.redrawAll();
+      }
+    });
+    resizeObserver.observe(document.getElementById("canvasContainer"));
+  }
 
-				this.redrawAll();
-			}
-		});
-		resizeObserver.observe(document.getElementById("canvasContainer"));
-	}
+  getContext() {
+    return this.ctx;
+  }
 
-	getContext() {
-		return this.ctx;
-	}
+  setSelectedColor(selectedColor) {
+    this.selectedColor = selectedColor;
+  }
 
-	drawDot() {
-		this.canvas.addEventListener("click", (event) => {
-			const rect = this.canvas.getBoundingClientRect();
-			const x = event.clientX - rect.left;
-			const y = event.clientY - rect.top;
-			this.ctx.fillStyle = "red";
-			this.ctx.fillRect(x, y, DOT_DIMENTION, DOT_DIMENTION);
-			this.dots.push({ x, y });
-			localStorage.setItem("dots", JSON.stringify(this.dots));
-		});
-	}
+  clearEvents() {
+    if (this.drawDotHandler) {
+      this.canvas.removeEventListener("click", this.drawDotHandler);
+      this.drawDotHandler = null;
+    }
+    if (this.drawLinesMouseDownHandler) {
+      this.canvas.removeEventListener(
+        "mousedown",
+        this.drawLinesMouseDownHandler,
+      );
+      this.drawLinesMouseDownHandler = null;
+    }
+    if (this.drawLinesMouseMoveHandler) {
+      this.canvas.removeEventListener(
+        "mousemove",
+        this.drawLinesMouseMoveHandler,
+      );
+      this.drawLinesMouseMoveHandler = null;
+    }
+    if (this.drawLinesMouseUpHandler) {
+      this.canvas.removeEventListener("mouseup", this.drawLinesMouseUpHandler);
+      this.drawLinesMouseUpHandler = null;
+    }
+  }
 
-	redrawDots() {
-		for (const dot of this.dots) {
-			this.ctx.fillStyle = "red";
-			this.ctx.fillRect(dot.x, dot.y, DOT_DIMENTION, DOT_DIMENTION);
-		}
-	}
+  drawDot() {
+    this.clearEvents();
+    this.drawDotHandler = (event) => {
+      const rect = this.canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      this.ctx.fillStyle = this.selectedColor;
+      this.ctx.fillRect(x, y, DOT_DIMENTION, DOT_DIMENTION);
+      this.dots.push({ x, y, color: this.selectedColor });
+      localStorage.setItem("dots", JSON.stringify(this.dots));
+    };
+    this.canvas.addEventListener("click", this.drawDotHandler);
+  }
 
-	clearDots() {
-		localStorage.removeItem("dots");
-		this.dots = [];
-		this.redrawAll();
-	}
+  redrawDots() {
+    for (const dot of this.dots) {
+      this.ctx.fillStyle = dot.color;
+      this.ctx.fillRect(dot.x, dot.y, DOT_DIMENTION, DOT_DIMENTION);
+    }
+  }
 
-	drawLines() {
-		this.canvas.addEventListener("mousedown", (event) => {
-			this.isDrawing = true;
-			const rect = this.canvas.getBoundingClientRect();
-			const startX = event.clientX - rect.left;
-			const startY = event.clientY - rect.top;
+  clearDots() {
+    localStorage.removeItem("dots");
+    this.dots = [];
+    this.redrawAll();
+  }
 
-			this.ctx.beginPath();
-			this.ctx.moveTo(startX, startY);
-			this.lines.push({ startX, startY, points: [] });
-		});
+  getMousePosition() {
+    const rect = this.canvas.getBoundingClientRect();
+    const displayMouseMove = document.getElementById("mouseTracker");
+    this.canvas.addEventListener("mousemove", (event) => {
+      console.log(event.clientX - rect.left);
+      console.log(event.clientY - rect.top);
+      displayMouseMove.textContent = `x: ${event.clientX - rect.left}, y: ${event.clientY - rect.top}`;
+    });
+  }
 
-		this.canvas.addEventListener("mousemove", (event) => {
-			if (this.isDrawing) {
-				const rect = this.canvas.getBoundingClientRect();
-				const x = event.clientX - rect.left;
-				const y = event.clientY - rect.top;
+  drawLines() {
+    this.clearEvents();
 
-				this.ctx.lineTo(x, y);
-				this.ctx.strokeStyle = "black";
-				this.ctx.lineWidth = 2;
-				this.ctx.stroke();
+    this.drawLinesMouseDownHandler = (event) => {
+      this.isDrawing = true;
 
-				this.lines[this.lines.length - 1].points.push({ x, y });
-			}
-		});
+      const rect = this.canvas.getBoundingClientRect();
+      const startX = event.clientX - rect.left;
+      const startY = event.clientY - rect.top;
 
-		this.canvas.addEventListener("mouseup", () => {
-			this.isDrawing = false;
-			this.ctx.closePath();
-		});
-	}
+      this.ctx.beginPath();
+      this.ctx.moveTo(startX, startY);
+      this.lines.push({ startX, startY, points: [] });
+    };
 
-	redrawLines() {
-		this.ctx.strokeStyle = "black";
-		this.ctx.lineWidth = 2;
+    this.drawLinesMouseMoveHandler = (event) => {
+      if (this.isDrawing) {
+        const rect = this.canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
 
-		for (const line of this.lines) {
-			this.ctx.beginPath();
-			this.ctx.moveTo(line.startX, line.startY);
-			for (const point of line.points) {
-				this.ctx.lineTo(point.x, point.y);
-				this.ctx.stroke();
-			}
-			this.ctx.closePath();
-		}
-	}
+        this.ctx.lineTo(x, y);
+        this.ctx.strokeStyle = this.selectedColor;
+        this.ctx.lineWidth = 2;
+        this.ctx.stroke();
 
-	addGridToCanvas() {
-		this.ctx.strokeStyle = GRID_COLOR_LINES;
+        this.lines[this.lines.length - 1].points.push({ x, y });
+      }
+    };
 
-		for (let x = 0; x <= this.canvas.width; x += this.gridSize) {
-			this.ctx.beginPath();
-			this.ctx.moveTo(x, 0);
-			this.ctx.lineTo(x, this.canvas.height);
-			this.ctx.stroke();
-		}
+    this.drawLinesMouseUpHandler = () => {
+      this.isDrawing = false;
+      this.ctx.closePath();
+    };
 
-		for (let y = 0; y <= this.canvas.height; y += this.gridSize) {
-			this.ctx.beginPath();
-			this.ctx.moveTo(0, y);
-			this.ctx.lineTo(this.canvas.width, y);
-			this.ctx.stroke();
-		}
-	}
+    this.canvas.addEventListener("mousedown", this.drawLinesMouseDownHandler);
+    this.canvas.addEventListener("mousemove", this.drawLinesMouseMoveHandler);
+    this.canvas.addEventListener("mouseup", this.drawLinesMouseUpHandler);
+  }
 
-	clearCanvas() {
-		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-	}
+  redrawLines() {
+    this.ctx.strokeStyle = this.selectedColor;
+    this.ctx.lineWidth = 2;
 
-	redrawAll() {
-		this.clearCanvas();
+    for (const line of this.lines) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(line.startX, line.startY);
+      for (const point of line.points) {
+        this.ctx.lineTo(point.x, point.y);
+        this.ctx.stroke();
+      }
+      this.ctx.closePath();
+    }
+  }
 
-		if (this.gridVisible) {
-			this.addGridToCanvas();
-		}
+  addGridToCanvas() {
+    this.ctx.strokeStyle = GRID_COLOR_LINES;
 
-		this.redrawDots();
-		this.redrawLines();
-	}
+    for (let x = 0; x <= this.canvas.width; x += this.gridSize) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(x, 0);
+      this.ctx.lineTo(x, this.canvas.height);
+      this.ctx.stroke();
+    }
 
-	toggleGrid() {
-		this.gridVisible = !this.gridVisible;
-		this.redrawAll();
-	}
+    for (let y = 0; y <= this.canvas.height; y += this.gridSize) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(0, y);
+      this.ctx.lineTo(this.canvas.width, y);
+      this.ctx.stroke();
+    }
+  }
+
+  clearCanvas() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  redrawAll() {
+    this.clearCanvas();
+
+    if (this.gridVisible) {
+      this.addGridToCanvas();
+    }
+
+    this.redrawDots();
+    this.redrawLines();
+  }
+
+  toggleGrid() {
+    this.gridVisible = !this.gridVisible;
+    this.redrawAll();
+  }
 }
