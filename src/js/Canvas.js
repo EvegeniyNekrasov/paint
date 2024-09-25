@@ -118,6 +118,21 @@ export class Canvas {
       displayMouseMove.textContent = `x: ${event.clientX - rect.left}, y: ${event.clientY - rect.top}`;
     });
   }
+
+  clearBoard() {
+    this.clearCanvas();
+
+    this.dots = [];
+    this.lines = [];
+    this.rectangles = [];
+
+    localStorage.remoItem("lines");
+    localStorage.removeItem("dots");
+    localStorage.removeItem("rectangles");
+
+    this.redrawAll();
+  }
+
   drawRectangle() {
     this.clearEvents();
 

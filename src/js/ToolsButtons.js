@@ -27,6 +27,12 @@ export class ToolsButtons {
         name: "rect",
         onclick: () => this.canvas.drawRectangle(),
       },
+      {
+        id: "clearCanvasBtn",
+        className: "clear",
+        name: "clear",
+        onclick: () => this.canvas.clearBoard()
+      }
     ];
   }
 
